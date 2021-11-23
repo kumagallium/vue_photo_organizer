@@ -20,7 +20,24 @@
               <v-row>
                   <v-col cols="3" sm="3" md="3" v-for="pic in pictures" :key="pic">
                     <v-card>
-                      <v-img :src="'file://'+pic"/>
+                      <v-img
+                        aspect-ratio="1"
+                        lazy-src="https://picsum.photos/id/11/100/60"
+                       :src="'file://'+pic"
+                      >
+                        <template v-slot:placeholder>
+                          <v-row
+                            class="fill-height ma-0"
+                            align="center"
+                            justify="center"
+                          >
+                            <v-progress-circular
+                              indeterminate
+                              color="grey lighten-5"
+                            ></v-progress-circular>
+                          </v-row>
+                        </template>
+                      </v-img>
                     </v-card>
                   </v-col>
               </v-row>
@@ -49,7 +66,7 @@ export default {
   },
   methods: {
     async find() {
-      this.pictures = await globby([this.directory+'*.png',this.directory+'*.jpg',this.directory+'*.jpeg']);
+      this.pictures = await globby([this.directory+'*.png',this.directory+'*.jpg',this.directory+'*.JPG',this.directory+'*.jpeg']);
     }
   },
   mounted(){
