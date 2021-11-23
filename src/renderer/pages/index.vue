@@ -1,25 +1,36 @@
 <template>
-    <v-container fluid class="pa-0">
-        <v-row justify="center">
-          <v-col>
-            <v-text-field
-              label="Directory"
-              placeholder="Directory"
-              @change="find"
-              v-model="directory"
-              outlined
-          ></v-text-field>
-          </v-col>
-        </v-row>
-        <v-row justify="center">
-            <v-col class="pt-8" cols="3" sm="3" md="3" v-for="pic in pictures" :key="pic">
-              <v-card class="px-md-6 px-sm-6 px-3">
-                <v-img :src="'file://'+pic"/>
-                {{pic}}
-              </v-card>
-            </v-col>
-        </v-row>
+  <v-main wrap>
+    <v-container fluid>
+      <v-row>
+        <v-spacer></v-spacer>
+        <v-col cols="11" sm="11" md="11">
+          <v-card flat class="ma-4 pa-4">
+            <v-row>
+              <v-col>
+                <v-text-field
+                  label="Directory"
+                  placeholder="Directory"
+                  @change="find"
+                  v-model="directory"
+                  outlined
+                ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-card color="teal lighten-5" class="pa-4">
+              <v-row>
+                  <v-col cols="3" sm="3" md="3" v-for="pic in pictures" :key="pic">
+                    <v-card>
+                      <v-img :src="'file://'+pic"/>
+                    </v-card>
+                  </v-col>
+              </v-row>
+            </v-card>
+          </v-card>
+        </v-col>
+        <v-spacer></v-spacer>
+      </v-row>
     </v-container>
+  </v-main>
       
 </template>
 
@@ -38,7 +49,7 @@ export default {
   },
   methods: {
     async find() {
-      this.pictures = await globby([this.directory+'*.png',this.directory+'*.jpg']);
+      this.pictures = await globby([this.directory+'*.png',this.directory+'*.jpg',this.directory+'*.jpeg']);
     }
   },
   mounted(){
