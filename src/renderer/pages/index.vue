@@ -1,6 +1,6 @@
 <template>
   <v-main wrap>
-    <v-container fluid>
+    <v-container fluid fill-height>
       <v-row>
         <v-spacer></v-spacer>
         <v-col cols="11" sm="11" md="11">
@@ -16,10 +16,12 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-card color="teal lighten-5" class="pa-4">
+            <v-card color="teal lighten-5" class="pa-4 overflow-y-auto"
+                      max-height="750">
               <v-row>
                   <v-col cols="3" sm="3" md="3" v-for="pic in pictures" :key="pic">
-                    <v-card>
+                    <v-card
+                    >
                       <v-img
                         aspect-ratio="1"
                         lazy-src="https://picsum.photos/id/11/100/60"
