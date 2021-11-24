@@ -1,14 +1,14 @@
 <template>
   <v-app>
-    <!--app-header /-->
+    <Navi></Navi>
     <nuxt />
   </v-app>
 </template>
 
 <script>
-//import appHeader from '@/components/header'
+import Navi from '@/components/Navi'
 export default {
-  components: { } //appHeader }
+  components: {Navi }
 }
 </script>
 
