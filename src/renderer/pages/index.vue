@@ -5,17 +5,6 @@
         <v-spacer></v-spacer>
         <v-col cols="11" sm="11" md="11">
           <v-card flat class="ma-4 pa-4">
-            <v-row>
-              <v-col>
-                <v-text-field
-                  label="Directory"
-                  placeholder="Directory"
-                  @change="find"
-                  v-model="directory"
-                  outlined
-                ></v-text-field>
-              </v-col>
-            </v-row>
             <v-card color="teal lighten-5" class="pa-4 overflow-y-auto"
                       max-height="750">
               <v-row>
@@ -40,6 +29,13 @@
                           </v-row>
                         </template>
                       </v-img>
+                      <v-text-field
+                        label="Name"
+                        placeholder="Name"
+                        v-model="unq_picname[idx].split('.')[0]"
+                        outlined
+                      ></v-text-field>
+                      {{"."+unq_picname[idx].split('.')[1]}}
                       <v-combobox
                         multiple
                         small-chips
@@ -51,7 +47,6 @@
               </v-row>
             </v-card>
           </v-card>
-          {{this.tags}}
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
@@ -75,6 +70,7 @@ export default {
     return {
       pictures: [],
       unq_pictures:[],
+      unq_picname:[],
       tags: [],
       selectedtags: {},
       directory:""//
@@ -89,7 +85,10 @@ export default {
         for(let pic of this.pictures){
           var picname = pic.split("/")[pic.split("/").length - 1]
           var tagname = pic.split(this.directory)[1].split("/")[0].split(".")
-          if(this.unq_pictures.indexOf(picname)<0) this.unq_pictures.push(pic)
+          if(this.unq_pictures.indexOf(picname)<0){
+            this.unq_pictures.push(pic)
+            this.unq_picname.push(picname)
+          }
           if(tagname.length == 1){
               if(Object.keys(this.selectedtags).indexOf(picname) < 0){
                 this.selectedtags[picname] = [tagname[0]]
