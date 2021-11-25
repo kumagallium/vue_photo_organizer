@@ -19,7 +19,7 @@
             <v-card color="teal lighten-5" class="pa-4 overflow-y-auto"
                       max-height="750">
               <v-row>
-                  <v-col cols="3" sm="3" md="3" v-for="pic in pictures" :key="pic">
+                  <v-col cols="3" sm="3" md="3" v-for="(pic, idx) in unq_pictures" :key="idx">
                     <v-card
                     >
                       <v-img
@@ -40,12 +40,18 @@
                           </v-row>
                         </template>
                       </v-img>
+                      <v-combobox
+                        multiple
+                        small-chips
+                        :items="tags"
+                        v-model="selectedtags[pic.split('/')[pic.split('/').length -1]]"
+                      ></v-combobox>
                     </v-card>
                   </v-col>
               </v-row>
             </v-card>
           </v-card>
-          {{this.files}}
+          {{this.tags}}
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
@@ -68,7 +74,9 @@ export default {
   data () {
     return {
       pictures: [],
-      files: [],
+      unq_pictures:[],
+      tags: [],
+      selectedtags: {},
       directory:""//
     }
   },
@@ -77,10 +85,28 @@ export default {
       try {
         this.pictures = await globby([this.directory+'**/*.png',this.directory+'**/*.jpg',
                                     this.directory+'**/*.JPG',this.directory+'**/*.jpeg']);
-        this.files = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)
+        this.tags = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)
+        for(let pic of this.pictures){
+          var picname = pic.split("/")[pic.split("/").length - 1]
+          var tagname = pic.split(this.directory)[1].split("/")[0].split(".")
+          if(this.unq_pictures.indexOf(picname)<0) this.unq_pictures.push(pic)
+          if(tagname.length == 1){
+              if(Object.keys(this.selectedtags).indexOf(picname) < 0){
+                this.selectedtags[picname] = [tagname[0]]
+              }
+              else{
+                console.log(1)
+                console.log(this.selectedtags[picname])
+                this.selectedtags[picname].push(tagname[0])
+                console.log(this.selectedtags[picname])
+              }
+          }
+        }
+          //this.selectedtags
       } catch (err) {
         this.pictures = []
-        this.files = []
+        this.tags = []
+        this.selectedtags = {}
         //console.log(err)
         // Here you get the error when the file was not found,
         // but you also get any other error
