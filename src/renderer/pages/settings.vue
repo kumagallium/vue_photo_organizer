@@ -52,6 +52,7 @@ export default {
         }
     },
     mounted(){
+        this.directory = store.get('dir')
     }
 }
 </script>
