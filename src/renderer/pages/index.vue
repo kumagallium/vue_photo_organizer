@@ -45,6 +45,7 @@
               </v-row>
             </v-card>
           </v-card>
+          {{this.files}}
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
@@ -56,6 +57,10 @@
 <script>
 //import { remote } from 'electron'
 const globby = require('globby');
+const fs = require('fs');
+const Store = require('electron-store')
+const store = new Store()
+console.log(store.path);
 
 export default {
   components: {
@@ -63,16 +68,28 @@ export default {
   data () {
     return {
       pictures: [],
-      directory:''
+      files: [],
+      directory:""//
     }
   },
   methods: {
     async find() {
-      this.pictures = await globby([this.directory+'*.png',this.directory+'*.jpg',this.directory+'*.JPG',this.directory+'*.jpeg']);
+      try {
+        this.pictures = await globby([this.directory+'**/*.png',this.directory+'**/*.jpg',
+                                    this.directory+'**/*.JPG',this.directory+'**/*.jpeg']);
+        this.files = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)
+      } catch (err) {
+        this.pictures = []
+        this.files = []
+        //console.log(err)
+        // Here you get the error when the file was not found,
+        // but you also get any other error
+      }
     }
   },
   mounted(){
-    this.find() 
+    this.directory = store.get('dir')
+    this.find();
     console.log(this.pictures);
   }
 }

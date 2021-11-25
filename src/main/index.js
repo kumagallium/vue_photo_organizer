@@ -9,3 +9,6 @@ app.on('window-all-closed', function () {
 
 // Load here all startup windows
 require('./mainWindow')
+
+const Store = require('electron-store')
+Store.initRenderer()
