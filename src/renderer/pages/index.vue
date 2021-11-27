@@ -54,10 +54,18 @@
                           <v-combobox
                             multiple
                             small-chips
+                            hide-details
                             :items="tags"
                             v-model="selectedtags[pic.split('/')[pic.split('/').length -1]]"
                              class="py-0"
                           ></v-combobox>
+                        </v-col>
+                      </v-row>
+                      <v-row class="ma-0">
+                        <v-col>
+                          <div class="body-2 grey--text text--darken-1 text-right">
+                            <v-icon small>mdi-clock</v-icon>{{pic_dates[pic.split('/')[pic.split('/').length -1]]}}
+                          </div>
                         </v-col>
                       </v-row>
                     </v-card>
@@ -75,6 +83,7 @@
 
 <script>
 //import { remote } from 'electron'
+var moment = require("moment");
 const globby = require('globby');
 const fs = require('fs');
 const Store = require('electron-store')
@@ -89,6 +98,7 @@ export default {
       pictures: [],
       unq_pictures:[],
       unq_picname:[],
+      pic_dates:{},
       tags: [],
       selectedtags: {},
       directory:""//
@@ -107,6 +117,7 @@ export default {
           if(this.unq_pictures.indexOf(picname)<0){
             this.unq_pictures.push(pic)
             this.unq_picname.push(picname)
+            this.pic_dates[picname] = moment(fs.statSync(pic).birthtime).format('MMM D, YYYY')
           }
           if(tagname.length == 1){
               if(Object.keys(this.selectedtags).indexOf(picname) < 0){

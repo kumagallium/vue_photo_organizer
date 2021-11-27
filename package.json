@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "electron-store": "^8.0.1",
-    "globby": "^11.0.4"
+    "globby": "^11.0.4",
+    "moment": "^2.29.1"
   }
 }
