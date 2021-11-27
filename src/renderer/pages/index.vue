@@ -9,39 +9,57 @@
                       max-height="750">
               <v-row>
                   <v-col cols="3" sm="3" md="3" v-for="(pic, idx) in unq_pictures" :key="idx">
-                    <v-card
-                    >
-                      <v-img
-                        aspect-ratio="1"
-                        lazy-src="https://picsum.photos/id/11/100/60"
-                       :src="'file://'+pic"
-                      >
-                        <template v-slot:placeholder>
-                          <v-row
-                            class="fill-height ma-0"
-                            align="center"
-                            justify="center"
+                    <v-card>
+                      <v-row>
+                        <v-col>
+                          <v-img
+                            aspect-ratio="1"
+                            lazy-src="https://picsum.photos/id/11/100/60"
+                            :src="'file://'+pic"
                           >
-                            <v-progress-circular
-                              indeterminate
-                              color="grey lighten-5"
-                            ></v-progress-circular>
-                          </v-row>
-                        </template>
-                      </v-img>
-                      <v-text-field
-                        label="Name"
-                        placeholder="Name"
-                        v-model="unq_picname[idx].split('.')[0]"
-                        outlined
-                      ></v-text-field>
-                      {{"."+unq_picname[idx].split('.')[1]}}
-                      <v-combobox
-                        multiple
-                        small-chips
-                        :items="tags"
-                        v-model="selectedtags[pic.split('/')[pic.split('/').length -1]]"
-                      ></v-combobox>
+                            <template v-slot:placeholder>
+                              <v-row
+                                class="fill-height ma-0"
+                                align="center"
+                                justify="center"
+                              >
+                                <v-progress-circular
+                                  indeterminate
+                                  color="grey lighten-5"
+                                ></v-progress-circular>
+                              </v-row>
+                            </template>
+                          </v-img>
+                        </v-col>
+                      </v-row>
+                      <v-row class="ma-0">
+                        <v-col cols="9" sm="9" md="9" class="pr-0">
+                          <v-text-field
+                            label="Name"
+                            placeholder="Name"
+                            v-model="unq_picname[idx].split('.')[0]"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="3" sm="3" md="3" class="pl-0">
+                          <v-card flat style="line-height:32px;">
+                            {{"."+unq_picname[idx].split('.')[1]}}
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                      <v-row class="ma-0">
+                        <v-col class="py-0">
+                          <v-combobox
+                            multiple
+                            small-chips
+                            :items="tags"
+                            v-model="selectedtags[pic.split('/')[pic.split('/').length -1]]"
+                             class="py-0"
+                          ></v-combobox>
+                        </v-col>
+                      </v-row>
                     </v-card>
                   </v-col>
               </v-row>
@@ -82,6 +100,7 @@ export default {
         this.pictures = await globby([this.directory+'**/*.png',this.directory+'**/*.jpg',
                                     this.directory+'**/*.JPG',this.directory+'**/*.jpeg']);
         this.tags = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)
+        console.log("metadata",fs.statSync(this.pictures[this.pictures.length - 1]))
         for(let pic of this.pictures){
           var picname = pic.split("/")[pic.split("/").length - 1]
           var tagname = pic.split(this.directory)[1].split("/")[0].split(".")
@@ -121,4 +140,11 @@ export default {
 </script>
 
 <style>
+.v-select__selections {
+  overflow: scroll;
+  flex-wrap: nowrap;
+}
+.v-chip {
+  overflow: initial;
+}
 </style>
