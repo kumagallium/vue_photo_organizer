@@ -90,7 +90,6 @@ const globby = require('globby');
 const fs = require('fs');
 const Store = require('electron-store')
 const store = new Store()
-console.log(store.path);
 
 export default {
   components: {
@@ -109,6 +108,7 @@ export default {
   },
   methods: {
     async find() {
+      console.log("find")
       try {
         this.pictures = await globby([this.directory+'**/*.png',this.directory+'**/*.jpg',
                                     this.directory+'**/*.JPG',this.directory+'**/*.jpeg']);
@@ -116,7 +116,7 @@ export default {
         this.selectedtags = {}
         this.unq_pictures = []
         this.unq_picname = []
-        console.log("metadata",fs.statSync(this.pictures[this.pictures.length - 1]))
+        this.pic_dates = []
         for(let pic of this.pictures){
           var picname = pic.split("/")[pic.split("/").length - 1]
           var tagname = pic.split(this.directory)[1].split("/")[0].split(".")
@@ -130,25 +130,47 @@ export default {
                 this.selectedtags[picname] = [tagname[0]]
               }
               else{
-                console.log(1)
-                console.log(this.selectedtags[picname])
                 this.selectedtags[picname].push(tagname[0])
-                console.log(this.selectedtags[picname])
               }
           }
         }
+        var sortidxs = this.argsort(Object.values(this.pic_dates))
+        var unq_pictures_tmp = []
+        var unq_picname_tmp = []
+        for(var sortidx of sortidxs){
+          unq_pictures_tmp.push(this.unq_pictures[sortidx])
+          unq_picname_tmp.push(this.unq_picname[sortidx])
+        }
+        this.unq_pictures = unq_pictures_tmp
+        this.unq_picname = unq_picname_tmp
       } catch (err) {
         this.pictures = []
         this.tags = []
         this.selectedtags = {}
       }
     },
+    argsort(array) {
+      const arrayObject = array.map((value, idx) => { return { value, idx }; });
+      arrayObject.sort((a, b) => {
+          if (a.value < b.value) {
+              return -1;
+          }
+          if (a.value > b.value) {
+              return 1;
+          }
+          return 0;
+      });
+      const argIndices = arrayObject.map(data => data.idx);
+      return argIndices;
+    },
     move(from, to){
+      console.log("move")
       fs.rename(from, to, (err) => {
           if (err) throw err;
       });
     },
     rename(event, pic,idx){
+      console.log("rename")
       var changedname = event+"."+pic.split(".")[pic.split(".").length-1]
       if(this.unq_picname.indexOf(changedname)<0){
         delete this.error[idx]
@@ -174,7 +196,6 @@ export default {
   mounted(){
     this.directory = store.get('dir')
     this.find();
-    console.log(this.pictures);
   }
 }
 </script>
