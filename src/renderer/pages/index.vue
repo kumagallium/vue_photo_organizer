@@ -11,7 +11,7 @@
                   <v-col cols="3" sm="3" md="3" v-for="(pic, idx) in unq_pictures" :key="idx">
                     <v-card>
                       <v-row>
-                        <v-col>
+                        <v-col class="pt-0">
                           <v-img
                             aspect-ratio="1"
                             lazy-src="https://picsum.photos/id/11/100/60"
@@ -40,7 +40,9 @@
                             v-model="unq_picname[idx].split('.')[0]"
                             outlined
                             dense
-                            hide-details
+                            :hide-details="Object.keys(error).indexOf(String(idx))<0"
+                            :error-messages="error[idx]"
+                            @change="rename($event,unq_picname[idx],idx)"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="3" sm="3" md="3" class="pl-0">
@@ -101,7 +103,8 @@ export default {
       pic_dates:{},
       tags: [],
       selectedtags: {},
-      directory:""//
+      directory:"",
+      error:{}
     }
   },
   methods: {
@@ -110,11 +113,14 @@ export default {
         this.pictures = await globby([this.directory+'**/*.png',this.directory+'**/*.jpg',
                                     this.directory+'**/*.JPG',this.directory+'**/*.jpeg']);
         this.tags = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)
+        this.selectedtags = {}
+        this.unq_pictures = []
+        this.unq_picname = []
         console.log("metadata",fs.statSync(this.pictures[this.pictures.length - 1]))
         for(let pic of this.pictures){
           var picname = pic.split("/")[pic.split("/").length - 1]
           var tagname = pic.split(this.directory)[1].split("/")[0].split(".")
-          if(this.unq_pictures.indexOf(picname)<0){
+          if(this.unq_picname.indexOf(picname)<0){
             this.unq_pictures.push(pic)
             this.unq_picname.push(picname)
             this.pic_dates[picname] = moment(fs.statSync(pic).birthtime).format('MMM D, YYYY')
@@ -131,15 +137,38 @@ export default {
               }
           }
         }
-          //this.selectedtags
       } catch (err) {
         this.pictures = []
         this.tags = []
         this.selectedtags = {}
-        //console.log(err)
-        // Here you get the error when the file was not found,
-        // but you also get any other error
       }
+    },
+    move(from, to){
+      fs.rename(from, to, (err) => {
+          if (err) throw err;
+      });
+    },
+    rename(event, pic,idx){
+      var changedname = event+"."+pic.split(".")[pic.split(".").length-1]
+      if(this.unq_picname.indexOf(changedname)<0){
+        delete this.error[idx]
+        for(let picpath of this.pictures.filter(p=>p.indexOf(pic)>-1)){
+          var dirtmp = picpath.replace(pic,"")
+          var extension = picpath.split(".")[picpath.split(".").length - 1]
+          this.move(picpath,dirtmp + event + "." + extension)
+        }
+      }
+      else{
+        if(pic == changedname){
+          delete this.error[idx]
+        }
+        else{
+          console.log("else")
+          this.unq_picname[idx].split('.')[0] = pic
+          this.error[idx] = "This image name already exists."
+        }
+      }
+      this.find()
     }
   },
   mounted(){
