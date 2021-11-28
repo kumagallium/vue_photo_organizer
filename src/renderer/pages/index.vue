@@ -86,6 +86,7 @@
 <script>
 //import { remote } from 'electron'
 var moment = require("moment");
+import { utimes } from 'utimes';
 const globby = require('globby');
 const fs = require('fs');
 const Store = require('electron-store')
@@ -232,10 +233,14 @@ export default {
         var makedir = this.directory+add_tag
         var dirpath = this.unq_pictures.filter(upic=>upic.indexOf(pic)>0)[0]
         if(fs.readdirSync(this.directory).filter(p=>p.indexOf(pic)>-1).length > 0){
+          var stat = fs.statSync(dirpath);
           this.move(dirpath,makedir+"/"+pic)
+          utimes(makedir+"/"+pic, {btime: stat.birthtime.getTime()});
         }
         else{
+          var stat = fs.statSync(dirpath);
           this.copy(dirpath,makedir+"/"+pic)
+          utimes(makedir+"/"+pic, {btime: stat.birthtime.getTime()});
         }
       }
       if(delete_tag.length > 0){
@@ -246,7 +251,9 @@ export default {
         }
         else{
           var dirpath = this.unq_pictures.filter(upic=>upic.indexOf(pic)>0)[0]
+          var stat = fs.statSync(dirpath);
           this.move(dirpath,this.directory+pic)
+          utimes(this.directory+pic, {btime: stat.birthtime.getTime()});
         }
       }
       for(var tag of this.tags){
