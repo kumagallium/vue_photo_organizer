@@ -154,10 +154,10 @@ export default {
     argsort(array) {
       const arrayObject = array.map((value, idx) => { return { value, idx }; });
       arrayObject.sort((a, b) => {
-          if (a.value < b.value) {
+          if ( new Date(a.value) < new Date(b.value)) {
               return -1;
           }
-          if (a.value > b.value) {
+          if ( new Date(a.value) > new Date(b.value)) {
               return 1;
           }
           return 0;
