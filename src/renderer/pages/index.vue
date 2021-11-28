@@ -58,7 +58,8 @@
                             hide-details
                             :items="tags"
                             v-model="selectedtags[pic.split('/')[pic.split('/').length -1]]"
-                             class="py-0"
+                            class="py-0"
+                            @change="changetag($event,unq_picname[idx],idx)"
                           ></v-combobox>
                         </v-col>
                       </v-row>
@@ -101,6 +102,7 @@ export default {
       pic_dates:{},
       tags: [],
       selectedtags: {},
+      selectedtags_save: {},
       directory:"",
       error:{}
     }
@@ -111,7 +113,7 @@ export default {
       try {
         this.pictures = await globby([this.directory+'**/*.png',this.directory+'**/*.jpg',
                                     this.directory+'**/*.JPG',this.directory+'**/*.jpeg']);
-        this.tags = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)
+        this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
         this.selectedtags = {}
         this.unq_pictures = []
         this.unq_picname = []
@@ -142,6 +144,7 @@ export default {
         }
         this.unq_pictures = unq_pictures_tmp
         this.unq_picname = unq_picname_tmp
+        this.selectedtags_save = JSON.parse(JSON.stringify(this.selectedtags))
       } catch (err) {
         this.pictures = []
         this.tags = []
@@ -168,6 +171,17 @@ export default {
           if (err) throw err;
       });
     },
+    copy(from, to){
+      console.log("copy")
+      fs.copyFile(from, to, (err) => {
+        if (err) throw err;
+      });
+    },
+    delete(filepath){
+      fs.unlink(filepath, (err) => {
+          if (err) throw err;
+      });
+    },
     rename(event, pic,idx){
       console.log("rename")
       var changedname = event+"."+pic.split(".")[pic.split(".").length-1]
@@ -190,10 +204,66 @@ export default {
         }
       }
       this.find()
+    },
+    mkdir(dirpath){
+      fs.mkdir(dirpath, (err) => {
+        if (err) { throw err; }
+      });
+    },
+    deletedir(dirpath){
+      fs.rmdir(dirpath, (err) => {
+          if (err) throw err;
+      });
+    },
+    changetag(event, pic,idx){
+      console.log("changetag")
+      if(Object.keys(this.selectedtags_save).indexOf(pic)>-1){
+        var delete_tag = this.selectedtags_save[pic].filter(sts=>this.selectedtags[pic].indexOf(sts)<0)
+        var add_tag = this.selectedtags[pic].filter(st=>this.selectedtags_save[pic].indexOf(st)<0)
+      }
+      else{
+        var delete_tag = []
+        var add_tag = event
+      }
+      if(add_tag.length > 0){
+        if(fs.readdirSync(this.directory).indexOf(add_tag)<0){
+          this.mkdir(this.directory+add_tag)
+        }
+        var makedir = this.directory+add_tag
+        var dirpath = this.unq_pictures.filter(upic=>upic.indexOf(pic)>0)[0]
+        if(fs.readdirSync(this.directory).filter(p=>p.indexOf(pic)>-1).length > 0){
+          this.move(dirpath,makedir+"/"+pic)
+        }
+        else{
+          this.copy(dirpath,makedir+"/"+pic)
+        }
+      }
+      if(delete_tag.length > 0){
+        console.log("delete",this.pictures.filter(p=>p.indexOf(pic)>-1))
+        if(this.pictures.filter(p=>p.indexOf(pic)>-1).length > 1){
+          var dirpath = this.unq_pictures.filter(upic=>upic.indexOf(pic)>0)[0]
+          this.delete(this.directory+delete_tag+"/"+pic)
+        }
+        else{
+          var dirpath = this.unq_pictures.filter(upic=>upic.indexOf(pic)>0)[0]
+          this.move(dirpath,this.directory+pic)
+        }
+      }
+      for(var tag of this.tags){
+        if(fs.readdirSync(this.directory+tag).length == 0){
+          this.deletedir(this.directory+tag)
+        }
+      }
+      this.find()
     }
   },
   mounted(){
     this.directory = store.get('dir')
+    if(fs.readdirSync(this.directory).indexOf("trashbox")<0){
+      console.log("makedir")
+      console.log(this.directory+"trashbox")
+      this.mkdir(this.directory+"trashbox")
+    }
     this.find();
   }
 }
