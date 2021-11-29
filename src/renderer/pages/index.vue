@@ -7,7 +7,7 @@
           <v-card flat class="ma-0 pa-0">
             <v-card flat class="pa-5 overflow-y-auto">
               <v-row>
-                  <v-col cols="3" sm="3" md="3" v-for="(pic, idx) in unq_pictures" :key="idx">
+                  <v-col cols="3" sm="3" md="2" v-for="(pic, idx) in unq_pictures" :key="idx">
                     <v-card>
                       <v-row>
                         <v-col class="pt-0">
@@ -266,6 +266,8 @@ export default {
   },
   mounted(){
     this.directory = store.get('dir')
+    this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+    this.$nuxt.$emit('gettags', this.tags)
     if(fs.readdirSync(this.directory).indexOf("trashbox")<0){
       console.log("makedir")
       console.log(this.directory+"trashbox")

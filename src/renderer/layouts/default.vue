@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Navi></Navi>
+    <Navi :tags="tags"></Navi>
     <nuxt />
   </v-app>
 </template>
@@ -8,7 +8,23 @@
 <script>
 import Navi from '@/components/Navi'
 export default {
-  components: {Navi }
+  components: { Navi },
+  data () {
+    return {
+      tags: [],
+    }
+  },
+  created() {
+    this.setListener()
+  },
+  methods: {
+    setListener() {
+      this.$nuxt.$on('gettags', this.gettags)
+    },
+    gettags(val) {
+      this.tags = val
+    }
+  }
 }
 </script>
 

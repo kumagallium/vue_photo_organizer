@@ -31,6 +31,7 @@ export default {
     data () {
         return {
         files: [],
+        tags: [],
         directory:''
         }
     },
@@ -44,15 +45,19 @@ export default {
             // Use dot-notation to access nested properties
             store.set('dir', this.directory);
             console.log(store.get('dir'));
+            this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
             //=> {bar: true}
 
             //store.delete('unicorn');
             //console.log(store.get('unicorn'));
             //=> undefined
+            this.$nuxt.$emit('gettags', this.tags)
         }
     },
     mounted(){
         this.directory = store.get('dir')
+        this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+        this.$nuxt.$emit('gettags', this.tags)
     }
 }
 </script>
