@@ -3,7 +3,7 @@
     clipped
     permanent
     app
-    color="teal lighten-1"
+    color="teal"
     dark
     width="120"
   >
@@ -15,7 +15,7 @@
                 max-height="35"
                 max-width="35"
                 src="VPO.png"
-                class="mx-auto my-2"
+                class="mx-auto my-0"
                 ></v-img>
             </nuxt-link>
         </v-list-item-content>
@@ -29,6 +29,8 @@
         </v-list-item>
         <v-list-item
           :exact="true"
+          link
+          :to="'/Unorganized'"
         >
             <v-list-item-content>
                 <v-list-item-title># Unorganized</v-list-item-title>
@@ -39,6 +41,7 @@
           :key="tag"
           :exact="true"
           link
+          :to="'/'+tag"
         >
             <v-list-item-content>
                 <v-list-item-title># {{ tag }}</v-list-item-title>
