@@ -121,6 +121,7 @@ export default {
                                       this.directory+this.$route.params.tagname+'/*.JPG',this.directory+this.$route.params.tagname+'/*.jpeg']);
         }
         this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+        this.$nuxt.$emit('gettags', this.tags)
         this.selectedtags = {}
         this.unq_pictures = []
         this.unq_picname = []
@@ -233,10 +234,10 @@ export default {
         var add_tag = event
       }
       if(add_tag.length > 0){
-        if(fs.readdirSync(this.directory).indexOf(add_tag)<0){
-          this.mkdir(this.directory+add_tag)
+        if(fs.readdirSync(this.directory).indexOf(add_tag[0])<0){
+          this.mkdir(this.directory+add_tag[0])
         }
-        var makedir = this.directory+add_tag
+        var makedir = this.directory+add_tag[0]
         var dirpath = this.unq_pictures.filter(upic=>upic.indexOf(pic)>0)[0]
         if(fs.readdirSync(this.directory).filter(p=>p.indexOf(pic)>-1).length > 0){
           var stat = fs.statSync(dirpath);
