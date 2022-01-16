@@ -272,21 +272,22 @@ export default {
     }
   },
   mounted(){
-    if((store.get('dir')!=undefined)&&(store.get('dir')!="")){
+    try{
       this.directory = store.get('dir')
+      this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+      this.$nuxt.$emit('gettags', this.tags)
+      if(fs.readdirSync(this.directory).indexOf("trashbox")<0){
+        console.log("makedir")
+        console.log(this.directory+"trashbox")
+        this.mkdir(this.directory+"trashbox")
+      }
+      console.log(this.$route.params.tagname)
+      this.find();
     }
-    else{
+    catch{
       this.$router.push('/settings')
     }
-    this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
-    this.$nuxt.$emit('gettags', this.tags)
-    if(fs.readdirSync(this.directory).indexOf("trashbox")<0){
-      console.log("makedir")
-      console.log(this.directory+"trashbox")
-      this.mkdir(this.directory+"trashbox")
-    }
-    console.log(this.$route.params.tagname)
-    this.find();
+    
   }
 }
 </script>

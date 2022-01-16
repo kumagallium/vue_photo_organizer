@@ -56,18 +56,14 @@ export default {
     },
     mounted(){
       console.log((store.get('dir')!=undefined)&&(store.get('dir')!=""))
-      if((store.get('dir')!=undefined)&&(store.get('dir')!="")){
+      try{
         this.directory = store.get('dir')
+        this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+        this.$nuxt.$emit('gettags', this.tags)
       }
-      else{
+      catch (error) {
           this.directory = "/Users/"
       }
-      console.log(1)
-      console.log(fs.readdirSync(this.directory))
-      this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
-      console.log(2)
-      this.$nuxt.$emit('gettags', this.tags)
-      console.log(3)
     }
 }
 </script>
