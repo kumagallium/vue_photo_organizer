@@ -119,8 +119,6 @@ export default {
         else{
           this.pictures = await globby([this.directory+this.$route.params.tagname+'/**/*.png',this.directory+this.$route.params.tagname+'/**/*.jpg',
                                       this.directory+this.$route.params.tagname+'/**/*.JPG',this.directory+this.$route.params.tagname+'/**/*.jpeg']);
-          console.log("this.pictures",this.directory+this.$route.params.tagname)
-          console.log("this.pictures",this.pictures)
         }
         this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
         this.$nuxt.$emit('gettags', this.tags)
