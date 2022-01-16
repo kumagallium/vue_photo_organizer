@@ -37,6 +37,7 @@ export default {
     },
     methods: {
         async setdir() {
+          try{
             //this.files = fs.readdirSync(this.directory).filter(dir=>dir.indexOf(".")<0)//await globby([this.directory+'*.png',this.directory+'*.jpg',this.directory+'*.JPG',this.directory+'*.jpeg']);
             //store.set('dir', '🦄');
             //console.log(store.get('dir'));
@@ -52,17 +53,24 @@ export default {
             //console.log(store.get('unicorn'));
             //=> undefined
             this.$nuxt.$emit('gettags', this.tags)
+          }
+          catch (error) {
+            this.directory = "/Users/"
+            this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+            this.$nuxt.$emit('gettags', this.tags)
+          }
         }
     },
     mounted(){
-      console.log((store.get('dir')!=undefined)&&(store.get('dir')!=""))
       try{
         this.directory = store.get('dir')
         this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
         this.$nuxt.$emit('gettags', this.tags)
       }
       catch (error) {
-          this.directory = "/Users/"
+        this.directory = "/Users/"
+        this.tags = fs.readdirSync(this.directory).filter(dir=>(dir.indexOf(".")<0)&&(dir!="trashbox"))
+        this.$nuxt.$emit('gettags', this.tags)
       }
     }
 }
