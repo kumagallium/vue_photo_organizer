@@ -15,6 +15,7 @@
                             aspect-ratio="1"
                             lazy-src="https://picsum.photos/id/11/100/60"
                             :src="'file://'+pic"
+                            @click="clickImage('file://'+pic,idx)"
                           >
                             <template v-slot:placeholder>
                               <v-row
@@ -74,7 +75,17 @@
                   </v-col>
               </v-row>
             </v-card>
+            <v-dialog
+                v-model="image_dialog"
+              >
+                <img
+                  :src="src"
+                  style="max-height:100vh;max-width:100%;"
+                >
+                </img>
+              </v-dialog>
           </v-card>
+
         </v-col>
         <v-spacer></v-spacer>
       </v-row>
@@ -101,6 +112,9 @@ export default {
       unq_pictures:[],
       unq_picname:[],
       pic_dates:{},
+      image_dialog:false,
+      src:"",
+      selectedidx:0,
       tags: [],
       selectedtags: {},
       selectedtags_save: {},
@@ -269,6 +283,12 @@ export default {
         }
       }
       this.find()
+    },
+    clickImage(val, idx){
+      console.log("src",val, idx)
+      this.src = val
+      this.selectedidx = idx
+      this.image_dialog = true
     }
   },
   mounted(){
