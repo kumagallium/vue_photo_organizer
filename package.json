@@ -37,10 +37,10 @@
     "eslint": "7.25.0",
     "eslint-friendly-formatter": "4.0.1",
     "eslint-loader": "4.0.2",
-    "nuxt": "^2.15.8",
+    "nuxt": "^4.6.3",
     "roboto-fontface": "^0.10.0",
     "vuetify": "^2.5.10",
-    "webpack": "^4.46.0",
+    "webpack": "^5.112.2",
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
